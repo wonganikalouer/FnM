@@ -1,0 +1,192 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="../lib/onsenui/css/onsenui-core.css">
+    <link rel="stylesheet" href="../lib/onsenui/css/onsen-css-components.css">
+    <link rel="stylesheet" href="../lib/onsenui/css/onsenui-fonts.css">
+    <link rel="stylesheet" href="../lib/onsenui/css/onsenui.css">
+    <script src="../lib/gslib_client_v1.2.3.js" type="text/javascript"></script>
+    <script src="../lib/jquery.js" type="text/javascript"></script>
+    <script src="../lib/bootstrap.js" type="text/javascript"></script>
+    <script src="../lib/peachy-pie_native.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../lib/bootstrap.css">
+    <link rel="stylesheet" href="../lib/font-awesome.css">
+    <script src="../scripts/main_script.js" type="text/javascript"></script>
+</head>
+
+<!-- floating button -->
+<button id="bts-test" class="fab fab--material fab--mini" onclick="show('alert-mask');show('alert-dialog')" style="bottom:0;position:fixed;right:0;margin:15px;width:50px;height:50px;z-index: 10000000000000;"><i class="zmdi zmdi-plus"></i></button>
+
+<button class="fab fab--material fab--mini" onclick="show('alert-mask-withdraw');show('alert-dialog-withdraw')" style="bottom:60;position:fixed;right:0;margin:15px;width:50px;height:50px;z-index: 10000000000000;"><i class="zmdi zmdi-minus" style="color:red;"></i></button>
+
+<!-- delete warning? -->
+<div class="action-sheet-mask" id="delete-dialog-mask" style="z-index: 9999999999999999999999999;display:none"></div>
+<div class="action-sheet" id="delete-dialog" style="z-index: 9999999999999999999999999;display:none">
+    <div class="action-sheet-title" id="delete-dialog-title">Delete</div>
+    <button class="action-sheet-button text-danger" id="delete-dialog-yes" onclick="perfomDeleteEvent()">Delete</button>
+    <button class="action-sheet-button" onclick="hide('delete-dialog-mask');hide('delete-dialog')">Cancel</button>
+</div>
+
+
+<body>
+
+    <!-- Navigation bar or tool bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <b class="navbar-brand text-light">FnM</b>
+        <button class="btn text-light" style="float: right;font-weight: bolder;"></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        </div>
+    </nav>
+
+    <!-- Accounting Add Money -->
+    <div class="alert-dialog-mask" style="display: none;z-index:100000000000;" id="alert-mask"></div>
+    <div class="alert-dialog" style="display: none;z-index: 1000000000000;" id="alert-dialog">
+        <div class="alert-dialog-container">
+            <div class="alert-dialog-title">Add Money</div>
+
+            <div class="alert-dialog-content mt-3 mb-3">
+                <div class="row">
+                    <div class="col-3">
+                        <button class="fab fab--material fab--mini" onclick="addMoney(-incrementValue)"><i class="zmdi zmdi-minus"></i></button>
+                    </div>
+                    <div class="col-6">
+                        <input type="number" class="form-control w-100 text-center" placeholder="1000" id="input-amount-to-add">
+                    </div>
+                    <div class="col-3">
+                        <button class="fab fab--material fab--mini" onclick="addMoney(incrementValue)"><i class="zmdi zmdi-plus"></i></button>
+                    </div>
+                    <label for="" class="w-100 text-left p-2 mt-3 mb-0">Description</label>
+                    <input type="text" list="datalist" class="form-control p-2 mt-0" placeholder="Desciption" id="description">
+                    <datalist id="datalist">
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="alert-dialog-footer alert-dialog-footer--rowfooter">
+                <button onclick="hide('alert-mask');hide('alert-dialog')" class="alert-dialog-button alert-dialog-button--primal alert-dialog-button--rowfooter">Cancel</button>
+                <button class="alert-dialog-button alert-dialog-button--rowfooter" onclick="insertToAccount()">Add <i class="fa fa-plus-circle"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accounting Withdraw Money -->
+    <div class="alert-dialog-mask" style="display: none;z-index:100000000000;" id="alert-mask-withdraw"></div>
+    <div class="alert-dialog" style="display: none;z-index: 1000000000000;" id="alert-dialog-withdraw">
+        <div class="alert-dialog-container">
+            <div class="alert-dialog-title">
+                Withdraw <i class="fa fa-arrow-down" style="color:red;"></i>
+            </div>
+
+            <div class="alert-dialog-content mt-3 mb-3">
+                <div class="row">
+                    <div class="col-3">
+                        <button class="fab fab--material fab--mini" onclick="addMoney(-incrementValue,'withdraw')"><i class="zmdi zmdi-minus"></i></button>
+                    </div>
+                    <div class="col-6">
+                        <input type="number" class="form-control w-100 text-center" placeholder="1000" id="input-amount-to-withdraw">
+                    </div>
+                    <div class="col-3">
+                        <button class="fab fab--material fab--mini" onclick="addMoney(incrementValue, 'withdraw')"><i class="zmdi zmdi-plus"></i></button>
+                    </div>
+                    <label for="" class="w-100 text-left p-2 mt-3 mb-0">Account Type [K 2,500]</label>
+                    <select class="select-input w-100 m-2" id="account-scheme">
+                        <option value="1">Savings</option>
+                        <option value="2">Needs</option>
+                        <option value="3">Wants</option>
+                      </select>
+
+                    <label for="" class="w-100 text-left p-2 mt-3 mb-0">Description</label>
+                    <input type="text" list="datalist-withdraw" class="form-control p-2 mt-0" placeholder="Desciption" id="description-withdraw">
+                    <datalist id="datalist-withdraw">
+                       </datalist>
+                </div>
+            </div>
+
+            <div class="alert-dialog-footer alert-dialog-footer--rowfooter">
+                <button onclick="hide('alert-mask-withdraw');hide('alert-dialog-withdraw')" class="alert-dialog-button alert-dialog-button--primal alert-dialog-button--rowfooter">Cancel</button>
+                <button class="alert-dialog-button alert-dialog-button--rowfooter" onclick="withdrawFromAccount()">Add <i class="fa fa-plus-circle"></i></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main body -->
+    <div class="w-100">
+        <div class="content">
+            <div class="w-100 p-5 bg-primary text-light">
+                <small>Cash in the bank</small>
+                <h1 id="current-amount">MWK 105,000</h1>
+                <h4 class="badge badge-light p-2" style="font-size: medium;border-radius:0px;"><i class="fa fa-arrow-up"></i> <span id="amount-addons">mwk 250</span></h4>
+            </div>
+            <!-- list of usage and account remainders -->
+            <ul class="list w-100">
+                <li class="list-item">
+                    <div class="list-item__left">
+                        <i class="fa fa-bank"></i>
+                    </div>
+
+                    <div class="list-item__center">
+                        <div class="list-item__title">
+                            <small>Savings Account</small></div>
+                        <div class="list-item__subtitle">
+                            <h3 id="savings-remainder">MWK 2500</h3>
+                            <div class="progress" style="border-radius: 0px;">
+                                <div class="progress-bar" role="progressbar" id="progressbar-savings" style="width: 0%;height:100%;border-radius: 0px; background:rgba(100,200,0,1)" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="list-item">
+                    <div class="list-item__left">
+                        <i class="fa fa-anchor"></i>
+                    </div>
+
+                    <div class="list-item__center">
+                        <div class="list-item__title">Basic Needs</div>
+                        <div class="list-item__subtitle">
+                            <h3 id="basics-remainder">MWK 2500</h3>
+                            <div class="progress" style="border-radius: 0px;">
+                                <div class="progress-bar" role="progressbar" id="progressbar-basics" style="width: 0%;height:100%;border-radius: 0px; background:rgba(100,200,0,1)" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="list-item">
+                    <div class="list-item__left">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+
+                    <div class="list-item__center">
+                        <div class="list-item__title">Other + Emergency</div>
+                        <div class="list-item__subtitle">
+                            <h3 id="emergency-remainder">MWK 2500</h3>
+                            <div class="progress" style="border-radius: 0px;">
+                                <div class="progress-bar" role="progressbar" id="progressbar-emergency" style="width: 0%;height:100%;border-radius: 0px; background:rgba(100,200,0,1)" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- //Recents activities -->
+        <div class="container">
+            <small>Recent Activities</small>
+            <ul class="list" id="recent-activities">
+
+            </ul>
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript" src="../scripts/model/settings.js"></script>
+    <script type="text/javascript" src="../scripts/model/account.js"></script>
+    <script type="text/javascript" src="../scripts/model/trash.js"></script>
+
+</body>
+
+</html>
